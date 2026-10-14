@@ -32,3 +32,190 @@ command = ["node", "node_modules/@vornrun/connector-sdk/dist/cli.js", "check", "
 
 [connector.auth]
 rung = "none"
+
+[[connector.triggers]]
+type = "newItem"
+label = "New item"
+description = "An item appears in any of the connection's feeds. The first poll of a feed fires only for items inside the look-back, an item with no date fires once, and an item dated before the newest one already seen never fires."
+
+[[connector.actions]]
+type = "readFeed"
+label = "Read a feed"
+description = "The newest items of one RSS, Atom or JSON Feed feed, up to 100, newest first with dateless items last."
+
+[[connector.actions.inputs]]
+key = "url"
+label = "Feed URL"
+required = true
+description = "The feed's address; https:// is assumed when there is no scheme."
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Items"
+type = "number"
+description = "How many of the newest items, a whole number from 1 to 100; 20 when empty."
+
+[[connector.actions.inputs]]
+key = "sinceHours"
+label = "Within hours"
+type = "number"
+description = "Only items published within this many hours; items with no date are left out when set."
+
+[[connector.actions.outputs]]
+key = "feed"
+description = "The feed as { title, url, siteUrl, format }, format one of rss2, rss1, atom, json"
+
+[[connector.actions.outputs]]
+key = "items"
+description = "Items as { id, title, url, author, publishedAt, updatedAt, summary, html, categories, feedTitle, feedUrl }"
+
+[[connector.actions.outputs]]
+key = "count"
+type = "number"
+description = "How many items came back, in `items`"
+
+[[connector.actions]]
+type = "readFeeds"
+label = "Read feeds"
+description = "Items from several feeds at once, filtered by age and keywords, one copy per address, newest first. A feed that fails is listed with its reason and never loses the others' items."
+
+[[connector.actions.inputs]]
+key = "urls"
+label = "Feed URLs"
+description = "Feed addresses, one per line or comma separated; the connection's feeds when empty."
+
+[[connector.actions.inputs]]
+key = "sinceHours"
+label = "Within hours"
+type = "number"
+description = "Only items published within this many hours; items with no date are left out when set."
+
+[[connector.actions.inputs]]
+key = "perFeed"
+label = "Items per feed"
+type = "number"
+description = "The newest items kept from each feed, a whole number from 1 to 100; 20 when empty."
+
+[[connector.actions.inputs]]
+key = "keywords"
+label = "Keywords"
+description = "Comma separated; an item passes when any one matches its title or summary as a whole word or phrase, ignoring case. Empty keeps everything."
+
+[[connector.actions.inputs]]
+key = "minFeedsOk"
+label = "Feeds that must answer"
+type = "number"
+description = "The action fails, naming every failed feed, when fewer feeds than this answer; 1 when empty."
+
+[[connector.actions.outputs]]
+key = "items"
+description = "Items as { id, title, url, author, publishedAt, updatedAt, summary, html, categories, feedTitle, feedUrl }"
+
+[[connector.actions.outputs]]
+key = "count"
+type = "number"
+description = "How many items came back, in `items`"
+
+[[connector.actions.outputs]]
+key = "feedsOk"
+type = "number"
+description = "How many feeds answered"
+
+[[connector.actions.outputs]]
+key = "feedsFailed"
+description = "The feeds that did not answer, as [{ url, error }]"
+
+[[connector.actions]]
+type = "saveFeeds"
+label = "Save feeds to a file"
+description = "Read feeds exactly as Read feeds does, then write the items to a JSON file instead of returning them, so a large read never has to pass through a template."
+
+[[connector.actions.inputs]]
+key = "path"
+label = "File"
+required = true
+description = "Where to write, as an absolute path or one starting with ~/; its folder is created when missing."
+
+[[connector.actions.inputs]]
+key = "urls"
+label = "Feed URLs"
+description = "Feed addresses, one per line or comma separated; the connection's feeds when empty."
+
+[[connector.actions.inputs]]
+key = "sinceHours"
+label = "Within hours"
+type = "number"
+description = "Only items published within this many hours; items with no date are left out when set."
+
+[[connector.actions.inputs]]
+key = "perFeed"
+label = "Items per feed"
+type = "number"
+description = "The newest items kept from each feed, a whole number from 1 to 100; 20 when empty."
+
+[[connector.actions.inputs]]
+key = "keywords"
+label = "Keywords"
+description = "Comma separated; an item passes when any one matches its title or summary as a whole word or phrase, ignoring case. Empty keeps everything."
+
+[[connector.actions.inputs]]
+key = "minFeedsOk"
+label = "Feeds that must answer"
+type = "number"
+description = "The action fails, naming every failed feed, when fewer feeds than this answer; 1 when empty."
+
+[[connector.actions.outputs]]
+key = "path"
+type = "string"
+description = "The absolute path written, holding { generatedAt, feedsOk, feedsFailed, count, items }"
+
+[[connector.actions.outputs]]
+key = "count"
+type = "number"
+description = "How many items came back, in `items`"
+
+[[connector.actions.outputs]]
+key = "feedsOk"
+type = "number"
+description = "How many feeds answered"
+
+[[connector.actions.outputs]]
+key = "feedsFailed"
+description = "The feeds that did not answer, as [{ url, error }]"
+
+[[connector.actions]]
+type = "findFeeds"
+label = "Find feeds"
+description = 'The RSS, Atom and JSON Feed feeds a web page declares in its link rel="alternate" tags, as absolute addresses with their titles; the address itself when it already is a feed.'
+
+[[connector.actions.inputs]]
+key = "url"
+label = "Page URL"
+required = true
+description = "A web page's address, or a feed's; https:// is assumed when there is no scheme."
+
+[[connector.actions.outputs]]
+key = "feeds"
+description = "The feeds found, as [{ url, title, type, format }]"
+
+[[connector.actions.outputs]]
+key = "count"
+type = "number"
+description = "How many feeds were found"
+
+[[connector.actions.outputs]]
+key = "isFeed"
+type = "boolean"
+description = "Whether the address given is itself a feed"
+
+[[connector.env]]
+name = "RSS_FEEDS"
+description = "Feed addresses, one per line or comma separated. The new-item trigger polls them, and Read feeds uses them when it is given none."
+
+[[connector.env]]
+name = "RSS_LOOKBACK_HOURS"
+description = "How far back the first poll of a feed reaches, a whole number of hours from 1 to 8760, so a new connection does not fire for the whole backlog."
+
+[[connector.env]]
+name = "RSS_USER_AGENT"
+description = "Sent with every request; some hosts refuse requests without one."
