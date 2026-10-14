@@ -1,0 +1,34 @@
+id = "rss"
+name = "RSS"
+version = "0.2.0"
+api = "vorn:connector@1"
+vorn = ">=0.9"
+publisher = "Vorn"
+description = "Trigger workflows from new items in RSS, Atom and JSON Feed feeds, and read feeds or find the feeds a web page declares from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = [
+    "M5.5 16a2.5 2.5 0 1 1 0 5a2.5 2.5 0 1 1 0-5z",
+    "M3 13a8 8 0 0 1 8 8h3A11 11 0 0 0 3 10z",
+    "M3 6a15 15 0 0 1 15 15h3A18 18 0 0 0 3 3z",
+]
+
+# The built connector is committed; installing fetches its one runtime dependency.
+[build]
+command = ["npm", "ci", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund"]
+
+# Polls run on a service, started on the first poll and stopped when idle.
+[service]
+command = ["node", "dist/index.js"]
+
+# Reading a feed from a workflow step runs one-shot: a process per call.
+[actions.readFeed]
+title = "Read a feed"
+command = ["node", "dist/index.js"]
+
+[checks]
+command = ["node", "node_modules/@vornrun/connector-sdk/dist/cli.js", "check", "dist/index.js", "--mock"]
+
+[connector.auth]
+rung = "none"
