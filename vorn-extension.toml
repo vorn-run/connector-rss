@@ -28,7 +28,7 @@ title = "Read a feed"
 command = ["node", "dist/index.js"]
 
 [checks]
-command = ["node", "node_modules/@vornrun/connector-sdk/dist/cli.js", "check", "dist/index.js", "--mock"]
+command = ["node", "node_modules/@vornrun/connector-sdk/dist/cli.js", "check", "./dist/index.js", "--mock"]
 
 [connector.auth]
 rung = "none"
